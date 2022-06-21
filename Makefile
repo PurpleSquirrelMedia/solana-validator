@@ -1,8 +1,8 @@
 
 
 # https://github.com/solana-labs/solana/releases
-SOLANA_VERSION=v1.9.20
-#SOLANA_VERSION=v1.10.26
+#SOLANA_VERSION=v1.9.20
+SOLANA_VERSION=v1.10.26
 
 
 build:
