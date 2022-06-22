@@ -6,7 +6,9 @@ SOLANA_VERSION=v1.10.26
 
 
 build:
-	# linux/386,linux/arm/v7,linux/arm/v6 fail
+	# linux/arm/v6: has no rust image
+	# linux/386: 'Failed to find the protoc binary. The PROTOC environment variable is not set, there is no bundled protoc for this platform, and protoc is not in the PATH', /usr/local/cargo/registry/src/github.com-1285ae84e5963aae/prost-build-0.9.0/build.rs:105:10
+	# linux/arm/v7: 'Failed to find the protoc binary. The PROTOC environment variable is not set, there is no bundled protoc for this platform, and protoc is not in the PATH', /usr/local/cargo/registry/src/github.com-1285ae84e5963aae/prost-build-0.9.0/build.rs:105:10
 	docker buildx build \
 		--pull \
 		--push \
