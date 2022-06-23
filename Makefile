@@ -2,21 +2,55 @@
 
 # https://github.com/solana-labs/solana/releases
 #SOLANA_VERSION=v1.9.20
-SOLANA_VERSION=v1.10.26
+#SOLANA_VERSION=v1.10.26
+SOLANA_VERSION=v1.10.27
 
+build: validator amman
 
-build:
+validator:
 	# linux/arm/v6: has no rust image
 	# linux/386: 'Failed to find the protoc binary. The PROTOC environment variable is not set, there is no bundled protoc for this platform, and protoc is not in the PATH', /usr/local/cargo/registry/src/github.com-1285ae84e5963aae/prost-build-0.9.0/build.rs:105:10
 	# linux/arm/v7: 'Failed to find the protoc binary. The PROTOC environment variable is not set, there is no bundled protoc for this platform, and protoc is not in the PATH', /usr/local/cargo/registry/src/github.com-1285ae84e5963aae/prost-build-0.9.0/build.rs:105:10
 	docker buildx build \
 		--pull \
 		--push \
+		--target minimal-validator \
+		--builder workbenchbuild \
 		--platform linux/amd64,linux/arm64 \
 		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
 		-t daonetes/solana-validator:$(SOLANA_VERSION) \
 		.
 
+build-img: 
+	docker --context xeon buildx build \
+		--pull \
+		--load \
+		--target build-validator \
+		--platform linux/amd64 \
+		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
+		-t daonetes/build-validator:$(SOLANA_VERSION) \
+		.
+
+anchor:
+	docker buildx build \
+		--pull \
+		--load \
+		--target build-anchor \
+		--platform linux/arm64 \
+		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
+		-t daonetes/solana-anchor:$(SOLANA_VERSION) \
+		.
+
+amman:
+	docker buildx build \
+		--pull \
+		--push \
+		--target amman-validator \
+		--builder workbenchbuild \
+		--platform linux/amd64,linux/arm64 \
+		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
+		-t daonetes/solana-amman:$(SOLANA_VERSION) \
+		.
 
 # docker context create my-context --description "some description" --docker "host=tcp://myserver:2376,ca=~/ca-file,cert=~/cert-file,key=~/key-file"
 
