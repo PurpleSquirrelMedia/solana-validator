@@ -4,13 +4,20 @@
 #SOLANA_VERSION=v1.9.20
 #SOLANA_VERSION=v1.10.26
 SOLANA_VERSION=v1.10.27
+
+DOCKERORG=cryptoworkbench
+
 OUTPUT=--push
 PLATFORM=linux/amd64,linux/arm64
 BUILDER=workbenchbuild
 # when building on only one system, you have to set context too?
 #BUILDER=m1
+#OUTPUT=--load
 #CONTEXT=--context=m1
 #PLATFORM=linux/arm64
+
+#OUTPUT=--load
+#PLATFORM=linux/amd64
 
 build: validator amman
 
@@ -25,7 +32,7 @@ validator:
 		--builder $(BUILDER) \
 		--platform $(PLATFORM) \
 		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
-		-t daonetes/solana-validator:$(SOLANA_VERSION) \
+		-t $(DOCKERORG)/solana-validator:$(SOLANA_VERSION) \
 		.
 
 build-img: 
@@ -36,18 +43,19 @@ build-img:
 		--builder $(BUILDER) \
 		--platform $(PLATFORM) \
 		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
-		-t daonetes/build-validator:$(SOLANA_VERSION) \
+		-t $(DOCKERORG)/build-validator:$(SOLANA_VERSION) \
 		.
 
+# get a local image
 anchor:
 	docker $(CONTEXT) buildx build \
 		--pull \
 		--load \
 		--target build-anchor \
 		--builder $(BUILDER) \
-		--platform $(PLATFORM) \
+		--platform linux/amd64 \
 		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
-		-t daonetes/solana-anchor:$(SOLANA_VERSION) \
+		-t $(DOCKERORG)/solana-anchor:$(SOLANA_VERSION) \
 		.
 
 amman:
@@ -58,7 +66,7 @@ amman:
 		--builder $(BUILDER) \
 		--platform $(PLATFORM) \
 		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
-		-t daonetes/solana-amman:$(SOLANA_VERSION) \
+		-t $(DOCKERORG)/solana-amman:$(SOLANA_VERSION) \
 		.
 
 # docker context create my-context --description "some description" --docker "host=tcp://myserver:2376,ca=~/ca-file,cert=~/cert-file,key=~/key-file"

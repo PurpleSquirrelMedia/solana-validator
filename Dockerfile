@@ -30,7 +30,10 @@ FROM debian:bullseye-slim as minimal-validator
 RUN apt-get update && apt-get install -y bzip2
 VOLUME ["/var/lib/solana-ledger"]
 COPY --from=build-validator /usr/local/bin/* /usr/local/bin
-COPY --from=build-anchor /usr/local/cargo/bin/anchor /usr/local/bin
+
+# Anchor and avm have a really weird relationship atm - so its complicated to just use an anchor binary
+COPY --from=build-anchor /usr/local/cargo/bin/avm /usr/local/cargo/bin/anchor /usr/local/bin
+COPY --from=build-anchor /root/.avm /root/.avm
 
 FROM build-tools as rust-and-nodejs
 
@@ -67,7 +70,10 @@ RUN apt-get update && apt-get install -y bzip2
 VOLUME ["/var/lib/solana-ledger"]
 
 COPY --from=build-validator /usr/local/bin/* /usr/local/bin
-COPY --from=build-anchor /usr/local/cargo/bin/anchor /usr/local/bin
+
+# Anchor and avm have a really weird relationship atm - so its complicated to just use an anchor binary
+COPY --from=build-anchor /usr/local/cargo/bin/avm /usr/local/cargo/bin/anchor /usr/local/bin
+COPY --from=build-anchor /root/.avm /root/.avm
 
 RUN bash -c 'source $HOME/.nvm/nvm.sh \
     && npm install --location=global @metaplex-foundation/amman'

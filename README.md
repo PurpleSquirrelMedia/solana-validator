@@ -1,8 +1,8 @@
-[![Docker](https://img.shields.io/badge/Docker-Image-green)](https://hub.docker.com/r/daonetes/solana-amman/tags)
+[![Docker](https://img.shields.io/badge/Docker-Image-green)](https://hub.docker.com/r/cryptoworkbench/solana-amman/tags)
 
 # solana-amman
 
-Solana validator container image built for x64, arm64, arm7 and maybe others.
+Solana validator container image built for x64, arm64 - make an issue if you need others!.
 
 includes solana validator and amman and later, some magic entrypoint code to assemble the amman config file
 
