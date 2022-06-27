@@ -4,6 +4,13 @@
 #SOLANA_VERSION=v1.9.20
 #SOLANA_VERSION=v1.10.26
 SOLANA_VERSION=v1.10.27
+OUTPUT=--push
+PLATFORM=linux/amd64,linux/arm64
+BUILDER=workbenchbuild
+# when building on only one system, you have to set context too?
+#BUILDER=m1
+#CONTEXT=--context=m1
+#PLATFORM=linux/arm64
 
 build: validator amman
 
@@ -11,43 +18,45 @@ validator:
 	# linux/arm/v6: has no rust image
 	# linux/386: 'Failed to find the protoc binary. The PROTOC environment variable is not set, there is no bundled protoc for this platform, and protoc is not in the PATH', /usr/local/cargo/registry/src/github.com-1285ae84e5963aae/prost-build-0.9.0/build.rs:105:10
 	# linux/arm/v7: 'Failed to find the protoc binary. The PROTOC environment variable is not set, there is no bundled protoc for this platform, and protoc is not in the PATH', /usr/local/cargo/registry/src/github.com-1285ae84e5963aae/prost-build-0.9.0/build.rs:105:10
-	docker buildx build \
+	docker $(CONTEXT) buildx build \
 		--pull \
-		--push \
+		$(OUTPUT) \
 		--target minimal-validator \
-		--builder workbenchbuild \
-		--platform linux/amd64,linux/arm64 \
+		--builder $(BUILDER) \
+		--platform $(PLATFORM) \
 		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
 		-t daonetes/solana-validator:$(SOLANA_VERSION) \
 		.
 
 build-img: 
-	docker --context xeon buildx build \
+	docker $(CONTEXT)  buildx build \
 		--pull \
 		--load \
 		--target build-validator \
-		--platform linux/amd64 \
+		--builder $(BUILDER) \
+		--platform $(PLATFORM) \
 		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
 		-t daonetes/build-validator:$(SOLANA_VERSION) \
 		.
 
 anchor:
-	docker buildx build \
+	docker $(CONTEXT) buildx build \
 		--pull \
 		--load \
 		--target build-anchor \
-		--platform linux/arm64 \
+		--builder $(BUILDER) \
+		--platform $(PLATFORM) \
 		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
 		-t daonetes/solana-anchor:$(SOLANA_VERSION) \
 		.
 
 amman:
-	docker buildx build \
+	docker $(CONTEXT) buildx build \
 		--pull \
-		--push \
+		$(OUTPUT) \
 		--target amman-validator \
-		--builder workbenchbuild \
-		--platform linux/amd64,linux/arm64 \
+		--builder $(BUILDER) \
+		--platform $(PLATFORM) \
 		--build-arg SOLANA_VERSION=$(SOLANA_VERSION) \
 		-t daonetes/solana-amman:$(SOLANA_VERSION) \
 		.
