@@ -35,6 +35,9 @@ COPY --from=build-validator /usr/local/bin/* /usr/local/bin
 COPY --from=build-anchor /usr/local/cargo/bin/avm /usr/local/cargo/bin/anchor /usr/local/bin
 COPY --from=build-anchor /root/.avm /root/.avm
 
+# HACK: Temporary until we can figure out a way to install BPF tool
+RUN anchor init bpf-install && cd bpf-install && anchor build && cd && rm -r bpf-install
+
 FROM build-tools as rust-and-nodejs
 
 # Set the SHELL to bash with pipefail option
@@ -79,6 +82,8 @@ RUN bash -c 'source $HOME/.nvm/nvm.sh \
     && npm install --location=global @metaplex-foundation/amman'
 
 WORKDIR /test-ledger
+
+ENV BPF_SDK_PATH /usr/local/bin/bpf
 
 ENTRYPOINT ["amman"]
 CMD ["start"]
