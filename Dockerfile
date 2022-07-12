@@ -36,7 +36,7 @@ COPY --from=build-anchor /usr/local/cargo/bin/avm /usr/local/cargo/bin/anchor /u
 COPY --from=build-anchor /root/.avm /root/.avm
 
 # HACK: Temporary until we can figure out a way to install BPF tool
-RUN anchor init bpf-install && cd bpf-install && anchor build && cd && rm -r bpf-install
+RUN anchor init bpf-install && cd bpf-install && anchor build && cd .. && rm -r bpf-install
 
 FROM build-tools as rust-and-nodejs
 
