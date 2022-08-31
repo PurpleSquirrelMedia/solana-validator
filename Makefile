@@ -3,7 +3,7 @@
 # https://github.com/solana-labs/solana/releases
 #SOLANA_VERSION=v1.9.29
 #SOLANA_VERSION=v1.10.34
-SOLANA_VERSION=v1.11.5
+SOLANA_VERSION=v1.11.6
 
 DOCKERORG=cryptoworkbench
 
